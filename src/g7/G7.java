@@ -1,21 +1,38 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package g7;
 
-/**
- *
- * @author Rasmu
- */
-public class G7 {
+import battleship.interfaces.BattleshipsPlayer;
+import tournament.player.PlayerFactory;
 
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String[] args) {
-        // TODO code application logic here
+public class G7 implements PlayerFactory<BattleshipsPlayer>
+{
+
+    public G7(){}
+    
+    
+    @Override
+    public BattleshipsPlayer getNewInstance()
+    {
+        return new HotShotPlayer();
+    }
+
+    @Override
+    public String getID()
+    {
+        return "G7";
+    }
+
+    @Override
+    public String getName()
+    {
+        return "HotShot!";
+    }
+
+    @Override
+    public String[] getAuthors()
+    {
+        String[] res = {"Magnus, Rasmus, Christian"};
+        return res;
     }
     
 }
+
