@@ -13,7 +13,6 @@ public class HotShotPlayer implements BattleshipsPlayer {
     private int sizeX;
     private int sizeY;
     private Board myBoard;
-    boolean[][] myShips = new boolean[sizeX][sizeY];
 
     public HotShotPlayer() {
     }
@@ -40,6 +39,7 @@ public class HotShotPlayer implements BattleshipsPlayer {
         myBoard = board;
         sizeX = board.sizeX();
         sizeY = board.sizeY();
+        boolean[][] myShips = new boolean[sizeX][sizeY];
 
         for (int i = 0; i < fleet.getNumberOfShips(); ++i) {
             Ship s = fleet.getShip(i);
@@ -57,7 +57,7 @@ public class HotShotPlayer implements BattleshipsPlayer {
                     int y = rnd.nextInt(sizeY);
                     pos = new Position(x, y);
                 }
-            } while (collision(pos, s, vertical));
+            } while (collision(pos, s, vertical, myShips));
 
             for (int j = 0; j < s.size(); j++) {
                 {
@@ -66,21 +66,21 @@ public class HotShotPlayer implements BattleshipsPlayer {
                     } else {
                         myShips[pos.x + j][pos.y] = true;
                     }
-                    board.placeShip(pos, s, vertical);
                 }
             }
+                    board.placeShip(pos, s, vertical);
         }
     }
 
-    private boolean collision(Position pos, Ship s, boolean vertical) {
+    private boolean collision(Position pos, Ship s, boolean vertical, boolean[][] t) {
         for (int j = 0; j < s.size(); j++) {
             {
                 if (vertical) {
-                    if (myShips[pos.x][pos.y + j] == true) {
+                    if (t[pos.x][pos.y + j]) {
                         return true;
                     }
                 } else {
-                    if (myShips[pos.x + j][pos.y] == true);
+                    if (t[pos.x + j][pos.y])
                     return true;
                 }
             }
@@ -88,18 +88,16 @@ public class HotShotPlayer implements BattleshipsPlayer {
         return false;
     }
 
-
-
-/**
- * Called every time the enemy has fired a shot.
- *
- * The purpose of this method is to allow the AI to react to the enemy's
- * incoming fire and place his/her ships differently next round.
- *
- * @param pos Position of the enemy's shot
- */
-@Override
-        public void incoming(Position pos) {
+    /**
+     * Called every time the enemy has fired a shot.
+     *
+     * The purpose of this method is to allow the AI to react to the enemy's
+     * incoming fire and place his/her ships differently next round.
+     *
+     * @param pos Position of the enemy's shot
+     */
+    @Override
+    public void incoming(Position pos) {
         //Do nothing
     }
 
@@ -114,7 +112,7 @@ public class HotShotPlayer implements BattleshipsPlayer {
      * @return Position of you next shot.
      */
     @Override
-        public Position getFireCoordinates(Fleet enemyShips) {
+    public Position getFireCoordinates(Fleet enemyShips) {
         int x = rnd.nextInt(sizeX);
         int y = rnd.nextInt(sizeY);
         return new Position(x, y);
@@ -131,7 +129,7 @@ public class HotShotPlayer implements BattleshipsPlayer {
      * @param enemyShips Fleet the enemy's ships.
      */
     @Override
-        public void hitFeedBack(boolean hit, Fleet enemyShips) {
+    public void hitFeedBack(boolean hit, Fleet enemyShips) {
         //Do nothing
     }
 
@@ -142,7 +140,7 @@ public class HotShotPlayer implements BattleshipsPlayer {
      * @param rounds int the number of rounds i a match
      */
     @Override
-        public void startMatch(int rounds, Fleet ships, int sizeX, int sizeY) {
+    public void startMatch(int rounds, Fleet ships, int sizeX, int sizeY) {
 
     }
 
@@ -152,7 +150,7 @@ public class HotShotPlayer implements BattleshipsPlayer {
      * @param round int the current round number.
      */
     @Override
-        public void startRound(int round) {
+    public void startRound(int round) {
 
     }
 
@@ -167,7 +165,7 @@ public class HotShotPlayer implements BattleshipsPlayer {
      * @param enemyPoints int enemy's points this round.
      */
     @Override
-        public void endRound(int round, int points, int enemyPoints) {
+    public void endRound(int round, int points, int enemyPoints) {
         //Do nothing
     }
 
@@ -180,7 +178,7 @@ public class HotShotPlayer implements BattleshipsPlayer {
      * @param draw int the number of draws in this match.
      */
     @Override
-        public void endMatch(int won, int lost, int draw) {
+    public void endMatch(int won, int lost, int draw) {
         //Do nothing
     }
 
