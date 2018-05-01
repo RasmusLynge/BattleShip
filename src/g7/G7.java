@@ -30,7 +30,7 @@ public class G7 implements PlayerFactory<BattleshipsPlayer>
     @Override
     public String[] getAuthors()
     {
-        String[] res = {"Magnus, Rasmus, Christian"};
+        String[] res = {"Magnus", "Rasmus", "Christian", "Mathias"};
         return res;
     }
     
