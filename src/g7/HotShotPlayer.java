@@ -5,7 +5,10 @@ import battleship.interfaces.Fleet;
 import battleship.interfaces.Position;
 import battleship.interfaces.Board;
 import battleship.interfaces.Ship;
+import com.sun.org.apache.xerces.internal.util.FeatureState;
+import java.util.ArrayList;
 import java.util.Random;
+import javafx.beans.binding.Bindings;
 
 public class HotShotPlayer implements BattleshipsPlayer {
 
@@ -13,6 +16,7 @@ public class HotShotPlayer implements BattleshipsPlayer {
     private int sizeX;
     private int sizeY;
     private Board myBoard;
+    ArrayList<Position> shotsFired = new ArrayList();
 
     public HotShotPlayer() {
     }
@@ -68,7 +72,7 @@ public class HotShotPlayer implements BattleshipsPlayer {
                     }
                 }
             }
-                    board.placeShip(pos, s, vertical);
+            board.placeShip(pos, s, vertical);
         }
     }
 
@@ -80,8 +84,9 @@ public class HotShotPlayer implements BattleshipsPlayer {
                         return true;
                     }
                 } else {
-                    if (t[pos.x + j][pos.y])
-                    return true;
+                    if (t[pos.x + j][pos.y]) {
+                        return true;
+                    }
                 }
             }
         }
@@ -113,9 +118,18 @@ public class HotShotPlayer implements BattleshipsPlayer {
      */
     @Override
     public Position getFireCoordinates(Fleet enemyShips) {
-        int x = rnd.nextInt(sizeX);
-        int y = rnd.nextInt(sizeY);
-        return new Position(x, y);
+        boolean inValidShot = true;
+        Position res = null;
+        while (inValidShot) {
+            res = getARandomShot();
+            for (int i = 0; i < shotsFired.size(); i++) {
+                if (!shotsFired.contains(res)) {
+                    inValidShot = false;
+                }
+                //if()
+            }
+        }
+        return res;
     }
 
     /**
@@ -129,6 +143,7 @@ public class HotShotPlayer implements BattleshipsPlayer {
      * @param enemyShips Fleet the enemy's ships.
      */
     @Override
+
     public void hitFeedBack(boolean hit, Fleet enemyShips) {
         //Do nothing
     }
@@ -182,4 +197,9 @@ public class HotShotPlayer implements BattleshipsPlayer {
         //Do nothing
     }
 
+    private Position getARandomShot() {
+        int x = rnd.nextInt(sizeX);
+        int y = rnd.nextInt(sizeY);
+        return new Position(x, y);
+    }
 }
