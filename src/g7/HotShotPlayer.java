@@ -20,7 +20,10 @@ public class HotShotPlayer implements BattleshipsPlayer {
     ArrayList<Position> shotsFiredNeighbours = new ArrayList();
     private boolean hit;
     private boolean searchAndDestory;
-    private int startTotalShipLength = 17;
+    private int startTotalShipLength = 0;
+    private Position lastHit;
+    private int enmeyShipsLengthTotal = 0;
+    private int hitCounter = 0;
 
     public HotShotPlayer() {
     }
@@ -124,13 +127,24 @@ public class HotShotPlayer implements BattleshipsPlayer {
     public Position getFireCoordinates(Fleet enemyShips) {
 
         Position p;
+        
+        startTotalShipLength = 0;
+        for (int i = 0; i < enemyShips.getNumberOfShips(); ++i) {
+            Ship se = enemyShips.getShip(i);
+            startTotalShipLength += se.size();
+        }
 
-        if (!shotsFiredNeighbours.isEmpty()) {
+        if (!shotsFiredNeighbours.isEmpty() && hitCounter != (startTotalShipLength - enmeyShipsLengthTotal) && startTotalShipLength) {
+            
+            System.out.println("hitcounter" + hitCounter + " StartTotal " + startTotalShipLength + " enemyShips " + enmeyShipsLengthTotal);
             System.out.println("while loop vi er i search and Destory mode");
             System.out.println("TARGET");
+            
             p = target();
         } else {
             System.out.println("test length = " + startTotalShipLength);
+            hitCounter = 0;
+            shotsFiredNeighbours.clear();
             p = hunt();
         }
         shotsFired.add(p);
@@ -149,9 +163,7 @@ public class HotShotPlayer implements BattleshipsPlayer {
 
     public Position target() {
         Position p = shotsFiredNeighbours.remove(0);
-        System.out.println("target: "+p);
-        //System.out.println("target = " + shotsFired.toString());
-
+        System.out.println("target: " + p);
         return p;
     }
 
@@ -160,8 +172,6 @@ public class HotShotPlayer implements BattleshipsPlayer {
         int y = rnd.nextInt(sizeY);
         return new Position(x, y);
     }
-
-    Position lastHit;
 
     /**
      * Called right after getFireCoordinates(...) to let your AI know if you hit
@@ -176,9 +186,16 @@ public class HotShotPlayer implements BattleshipsPlayer {
     @Override
     public void hitFeedBack(boolean hit, Fleet enemyShips) {
         this.hit = hit;
+        
+        enmeyShipsLengthTotal = 0;
+        for (int i = 0; i < enemyShips.getNumberOfShips(); ++i) {
+            Ship se = enemyShips.getShip(i);
+            enmeyShipsLengthTotal += se.size();
+        }
+
         if (hit) {
-            startTotalShipLength--;
-            System.out.println("A");
+            hitCounter++;
+            System.out.println("kig efter neighbours");
             lastHit = shotsFired.get(shotsFired.size() - 1);
             Position east = new Position(lastHit.x + 1, lastHit.y);
             Position west = new Position(lastHit.x - 1, lastHit.y);
@@ -200,12 +217,12 @@ public class HotShotPlayer implements BattleshipsPlayer {
                 System.out.println("B4");
                 shotsFiredNeighbours.add(0, south);
             }
-            System.out.println(shotsFiredNeighbours.toString());
+            System.out.println("shots fired at neighbours" + shotsFiredNeighbours.toString());
         }
     }
 
     public boolean isNextHitShotValid(Position p) {
-        return (p.x > 0 && p.x < sizeX && p.y > 0 && p.y < sizeY
+        return (p.x >= 0 && p.x < sizeX && p.y >= 0 && p.y < sizeY
                 && !shotsFired.contains(p) && !shotsFiredNeighbours.contains(p));
     }
 
