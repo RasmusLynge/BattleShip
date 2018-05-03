@@ -17,8 +17,9 @@ public class HotShotPlayer implements BattleshipsPlayer {
     private int sizeY;
     private Board myBoard;
     ArrayList<Position> shotsFired = new ArrayList();
-    private Position lastShot, secondLastShot;
+    ArrayList<Position> shotsFiredNeighbours = new ArrayList();
     private boolean hit;
+    private boolean searchAndDestory;
     private int startTotalShipLength = 17;
 
     public HotShotPlayer() {
@@ -121,40 +122,49 @@ public class HotShotPlayer implements BattleshipsPlayer {
      */
     @Override
     public Position getFireCoordinates(Fleet enemyShips) {
-        while (hit == true) {
-            System.out.println("while loop");
-            return target();
+
+        Position p;
+        if (!shotsFiredNeighbours.isEmpty()) {
+            searchAndDestory = true;
         }
+
+        while (searchAndDestory) {
+            System.out.println("while loop vi er i search and Destory mode");
+            p = target();
+        }
+        
         System.out.println("test length = " + startTotalShipLength);
-        return hunt();
+        
+        p = hunt();
+        shotsFired.add(p);
+        return p;
     }
 
     public Position hunt() {
         Position p;
         do {
             p = getARandomShot();
-
         } while (shotsFired.contains(p));
-        
-        shotsFired.add(p);
+
         System.out.println("hunt = " + shotsFired.toString());
         return p;
     }
 
     public Position target() {
-        Position p;
-        int x = shotsFired.get(shotsFired.size() - 1).x + 1;
-        int y = shotsFired.get(shotsFired.size() - 1).y + 1;
-
-        do {
-            p = new Position(x, y);
-
-        } while (shotsFired.contains(p));
+        Position p = shotsFiredNeighbours.remove(0);
         
         System.out.println("target = " + shotsFired.toString());
-        shotsFired.add(p);
+
         return p;
     }
+
+    private Position getARandomShot() {
+        int x = rnd.nextInt(sizeX);
+        int y = rnd.nextInt(sizeY);
+        return new Position(x, y);
+    }
+
+    Position lastHit;
 
     /**
      * Called right after getFireCoordinates(...) to let your AI know if you hit
@@ -167,12 +177,33 @@ public class HotShotPlayer implements BattleshipsPlayer {
      * @param enemyShips Fleet the enemy's ships.
      */
     @Override
-
     public void hitFeedBack(boolean hit, Fleet enemyShips) {
         this.hit = hit;
         if (hit) {
             startTotalShipLength--;
+            lastHit = shotsFired.get(shotsFired.size() - 1);
+            Position east = new Position(lastHit.x + 1, lastHit.y);
+            Position west = new Position(lastHit.x - 1, lastHit.y);
+            Position north = new Position(lastHit.x, lastHit.y + 1);
+            Position south = new Position(lastHit.x, lastHit.y - 1);
+            if (isNextHitShotValid(east)) {
+                shotsFiredNeighbours.add(east);
+            }
+            if (isNextHitShotValid(west)) {
+                shotsFiredNeighbours.add(west);
+            }
+            if (isNextHitShotValid(north)) {
+                shotsFiredNeighbours.add(north);
+            }
+            if (isNextHitShotValid(south)) {
+                shotsFiredNeighbours.add(south);
+            }
         }
+    }
+
+    public boolean isNextHitShotValid(Position p) {
+        return (p.x > 0 && p.x < sizeX && p.y > 0 && p.y < sizeY
+                && !shotsFired.contains(p) && !shotsFiredNeighbours.contains(p));
     }
 
     /**
@@ -222,11 +253,5 @@ public class HotShotPlayer implements BattleshipsPlayer {
     @Override
     public void endMatch(int won, int lost, int draw) {
         //Do nothing
-    }
-
-    private Position getARandomShot() {
-        int x = rnd.nextInt(sizeX);
-        int y = rnd.nextInt(sizeY);
-        return new Position(x, y);
     }
 }
