@@ -20,12 +20,15 @@ public class HotShotPlayer implements BattleshipsPlayer {
     ArrayList<Position> shotsFiredNeighbours = new ArrayList();
     private boolean hit;
     private boolean searchAndDestory;
-    private int startTotalShipLength = 0;
+    private int before;
     private Position lastHit;
-    private int enmeyShipsLengthTotal = 0;
+    private int after;
     private int hitCounter = 0;
+    
+    private boolean seek = false;
 
     public HotShotPlayer() {
+        
     }
 
     /**
@@ -47,6 +50,7 @@ public class HotShotPlayer implements BattleshipsPlayer {
     @Override
     @SuppressWarnings("empty-statement")
     public void placeShips(Fleet fleet, Board board) {
+        after = fleet.getNumberOfShips();
         myBoard = board;
         sizeX = board.sizeX();
         sizeY = board.sizeY();
@@ -128,21 +132,27 @@ public class HotShotPlayer implements BattleshipsPlayer {
 
         Position p;
         
-        startTotalShipLength = 0;
-        for (int i = 0; i < enemyShips.getNumberOfShips(); ++i) {
-            Ship se = enemyShips.getShip(i);
-            startTotalShipLength += se.size();
+        before = after;
+        after = enemyShips.getNumberOfShips();
+        
+        System.out.println(before);
+        System.out.println(after);
+        
+        if(before != after){
+            seek = false;
         }
+        
+      
+        System.out.println("seek:" + seek);
+        if (!shotsFiredNeighbours.isEmpty() && seek ) {
 
-        if (!shotsFiredNeighbours.isEmpty() && hitCounter != (startTotalShipLength - enmeyShipsLengthTotal) && startTotalShipLength) {
-            
-            System.out.println("hitcounter" + hitCounter + " StartTotal " + startTotalShipLength + " enemyShips " + enmeyShipsLengthTotal);
+//            System.out.println("hitcounter" + hitCounter + " StartTotal " + startTotalShipLength + " enemyShips " + enmeyShipsLengthTotal);
             System.out.println("while loop vi er i search and Destory mode");
             System.out.println("TARGET");
-            
+
             p = target();
         } else {
-            System.out.println("test length = " + startTotalShipLength);
+//            System.out.println("test length = " + startTotalShipLength);
             hitCounter = 0;
             shotsFiredNeighbours.clear();
             p = hunt();
@@ -186,14 +196,10 @@ public class HotShotPlayer implements BattleshipsPlayer {
     @Override
     public void hitFeedBack(boolean hit, Fleet enemyShips) {
         this.hit = hit;
-        
-        enmeyShipsLengthTotal = 0;
-        for (int i = 0; i < enemyShips.getNumberOfShips(); ++i) {
-            Ship se = enemyShips.getShip(i);
-            enmeyShipsLengthTotal += se.size();
-        }
 
+        
         if (hit) {
+            seek = true;
             hitCounter++;
             System.out.println("kig efter neighbours");
             lastHit = shotsFired.get(shotsFired.size() - 1);
@@ -201,6 +207,7 @@ public class HotShotPlayer implements BattleshipsPlayer {
             Position west = new Position(lastHit.x - 1, lastHit.y);
             Position north = new Position(lastHit.x, lastHit.y + 1);
             Position south = new Position(lastHit.x, lastHit.y - 1);
+            
             if (isNextHitShotValid(east)) {
                 System.out.println("B1");
                 shotsFiredNeighbours.add(0, east);
