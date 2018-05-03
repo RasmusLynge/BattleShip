@@ -19,6 +19,7 @@ public class HotShotPlayer implements BattleshipsPlayer {
     ArrayList<Position> shotsFired = new ArrayList();
     private Position lastShot, secondLastShot;
     private boolean hit;
+    private int startTotalShipLength = 17;
 
     public HotShotPlayer() {
     }
@@ -120,39 +121,41 @@ public class HotShotPlayer implements BattleshipsPlayer {
      */
     @Override
     public Position getFireCoordinates(Fleet enemyShips) {
-        boolean hit = false;
-        hitFeedBack(hit, enemyShips);
-        while(hit != true){
-            return hunt();
+        while (hit == true) {
+            System.out.println("while loop");
+            return target();
         }
-        return target();
-       
-//        boolean inValidShot = true;
-//        Position res = null;
-//        while (inValidShot) {
-//            res = getARandomShot();
-//            for (int i = 0; i < shotsFired.size(); i++) {
-//                if (!shotsFired.contains(res)) {
-//                    inValidShot = false;
-//                    return res;
-//                }
-//                if()
-//            }
-//        }
-//        return getARandomShot();
-    
+        System.out.println("test length = " + startTotalShipLength);
+        return hunt();
     }
-    public Position hunt(){
+
+    public Position hunt() {
         Position p;
-        do{
+        do {
             p = getARandomShot();
+
         } while (shotsFired.contains(p));
+        
+        shotsFired.add(p);
+        System.out.println("hunt = " + shotsFired.toString());
+        return p;
+    }
+
+    public Position target() {
+        Position p;
+        int x = shotsFired.get(shotsFired.size() - 1).x + 1;
+        int y = shotsFired.get(shotsFired.size() - 1).y + 1;
+
+        do {
+            p = new Position(x, y);
+
+        } while (shotsFired.contains(p));
+        
+        System.out.println("target = " + shotsFired.toString());
         shotsFired.add(p);
         return p;
     }
-    public Position target(){
-     return null; // ikke udviklet endnu   
-    }
+
     /**
      * Called right after getFireCoordinates(...) to let your AI know if you hit
      * something or not.
@@ -166,7 +169,10 @@ public class HotShotPlayer implements BattleshipsPlayer {
     @Override
 
     public void hitFeedBack(boolean hit, Fleet enemyShips) {
-        //Do nothing
+        this.hit = hit;
+        if (hit) {
+            startTotalShipLength--;
+        }
     }
 
     /**
