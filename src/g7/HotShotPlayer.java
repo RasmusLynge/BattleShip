@@ -124,18 +124,15 @@ public class HotShotPlayer implements BattleshipsPlayer {
     public Position getFireCoordinates(Fleet enemyShips) {
 
         Position p;
-        if (!shotsFiredNeighbours.isEmpty()) {
-            searchAndDestory = true;
-        }
 
-        while (searchAndDestory) {
+        if (!shotsFiredNeighbours.isEmpty()) {
             System.out.println("while loop vi er i search and Destory mode");
+            System.out.println("TARGET");
             p = target();
+        } else {
+            System.out.println("test length = " + startTotalShipLength);
+            p = hunt();
         }
-        
-        System.out.println("test length = " + startTotalShipLength);
-        
-        p = hunt();
         shotsFired.add(p);
         return p;
     }
@@ -152,8 +149,8 @@ public class HotShotPlayer implements BattleshipsPlayer {
 
     public Position target() {
         Position p = shotsFiredNeighbours.remove(0);
-        
-        System.out.println("target = " + shotsFired.toString());
+        System.out.println("target: "+p);
+        //System.out.println("target = " + shotsFired.toString());
 
         return p;
     }
@@ -181,23 +178,29 @@ public class HotShotPlayer implements BattleshipsPlayer {
         this.hit = hit;
         if (hit) {
             startTotalShipLength--;
+            System.out.println("A");
             lastHit = shotsFired.get(shotsFired.size() - 1);
             Position east = new Position(lastHit.x + 1, lastHit.y);
             Position west = new Position(lastHit.x - 1, lastHit.y);
             Position north = new Position(lastHit.x, lastHit.y + 1);
             Position south = new Position(lastHit.x, lastHit.y - 1);
             if (isNextHitShotValid(east)) {
-                shotsFiredNeighbours.add(east);
+                System.out.println("B1");
+                shotsFiredNeighbours.add(0, east);
             }
             if (isNextHitShotValid(west)) {
-                shotsFiredNeighbours.add(west);
+                System.out.println("B2");
+                shotsFiredNeighbours.add(0, west);
             }
             if (isNextHitShotValid(north)) {
-                shotsFiredNeighbours.add(north);
+                System.out.println("B3");
+                shotsFiredNeighbours.add(0, north);
             }
             if (isNextHitShotValid(south)) {
-                shotsFiredNeighbours.add(south);
+                System.out.println("B4");
+                shotsFiredNeighbours.add(0, south);
             }
+            System.out.println(shotsFiredNeighbours.toString());
         }
     }
 
