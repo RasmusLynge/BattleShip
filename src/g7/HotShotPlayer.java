@@ -251,7 +251,7 @@ public class HotShotPlayer implements BattleshipsPlayer {
      */
     @Override
     public void startRound(int round) {
-
+        
     }
 
     /**
@@ -266,7 +266,8 @@ public class HotShotPlayer implements BattleshipsPlayer {
      */
     @Override
     public void endRound(int round, int points, int enemyPoints) {
-        //Do nothing
+        shotsFiredNeighbours.clear();
+        shotsFired.clear();
     }
 
     /**
@@ -279,6 +280,6 @@ public class HotShotPlayer implements BattleshipsPlayer {
      */
     @Override
     public void endMatch(int won, int lost, int draw) {
-        //Do nothing
+        
     }
 }
